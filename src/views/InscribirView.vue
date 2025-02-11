@@ -10,7 +10,7 @@
             <!-- NOMRBE DE LOS JUGADORES -->
             <div id="nombre_jugadores">
                 <span>Nombre de los jugadores:</span>
-                <div v-if="cont = 5 " id="jugadores">
+                <div id="jugadores">
                     <!-- JUGADOR 1 -->
                     <div id="linea_nombre">
                         <div id="linea">
@@ -66,10 +66,22 @@ export default {
     },
     methods:{
         añadirJugador(){
-            this.jugador = {
+
+            if (this.cont >= 5){
+                this.toast.error('NO PUEDEN HABER MAS DE 5 JUGADORES LERDO!!')
+            }else{
+                this.jugador = {
                 'posicion': this.posicion,
                 'nombre': this.nombre_jugador
+                }
+
+                this.jugadores.push(this.jugador)
+                console.log(this.jugadores);
+                this.cont++
             }
+
+            this.posicion = ''
+            this.nombre_jugador = ''
         }
     },
     setup() {
