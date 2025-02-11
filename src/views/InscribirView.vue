@@ -22,12 +22,12 @@
                                 <option value="ADC">ADC</option>
                                 <option value="SUP">SUP</option>
                             </select>
-                            <button @click="añadirJugador">Agregar jugador</button>
                         </div>
                         <div id="nombre">
                             <label for="">Nombre del jugador:</label>
                             <input v-model="nombre_jugador" placeholder="Ej: Caps" type="text">
                         </div>
+                        <button type="button" @click="añadirJugador">Agregar jugador</button>
                     </div>
                 </div>
             </div>
@@ -40,13 +40,16 @@
             <div id="logo">
                 <label for="">URL del logo:</label>
                 <input v-model="logo" placeholder="Tu URL" type="text">
+                <img :src=this.logo alt="">
             </div>
-            <button>Registrarse</button>
+            <button type="sumbit">Registrarse</button>
         </form>
     </section>
 </template>
 
 <script>
+import { db } from "@/db/firebase";  
+import { collection, addDoc } from "firebase/firestore"; 
 import { useToast } from "vue-toastification";
 export default {
     name:'InscribirView',
@@ -82,6 +85,32 @@ export default {
 
             this.posicion = ''
             this.nombre_jugador = ''
+        },
+        async valores() {
+            try {
+                const nuevoEquipo = {
+                    nombre: this.equipo,
+                    descripcion: this.descripcion,
+                    logo: this.logo,
+                    jugadores: this.jugadores
+                };
+
+                // Guarda el nuevo equipo en Firestore
+                await addDoc(collection(db, "equipos"), nuevoEquipo);
+
+                this.toast.success("Equipo registrado correctamente!");
+
+                // Reiniciar el formulario
+                this.equipo = "";
+                this.descripcion = "";
+                this.logo = "";
+                this.jugadores = [];
+                this.cont = 0;
+
+            } catch (error) {
+                this.toast.error("Error al registrar el equipo");
+                console.error("Error al guardar en Firestore:", error);
+            }
         }
     },
     setup() {
@@ -90,7 +119,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-</style>
